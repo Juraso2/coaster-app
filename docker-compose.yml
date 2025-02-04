@@ -3,6 +3,9 @@ version: '3.9'
 services:
     app:
         build:
+            args:
+                user: app
+                uid: 1000
             context: .
             dockerfile: docker/php/Dockerfile
         container_name: coaster-app
