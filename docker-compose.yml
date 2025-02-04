@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        container_name: coaster-app
+        restart: always
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - valkey
+        environment:
+            - APP_ENV=production
+
+    nginx:
+        image: nginx:latest
+        container_name: coaster-nginx
+        restart: always
+        ports:
+            - "8080:80"
+        volumes:
+            - .:/var/www/html
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - app
+
+    valkey:
+        image: valkey/valkey:latest
+        container_name: coaster-valkey
+        restart: always
+        ports:
+            - "6379:6379"
