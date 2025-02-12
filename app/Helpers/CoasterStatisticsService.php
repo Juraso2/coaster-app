@@ -33,9 +33,16 @@ class CoasterStatisticsService
 
     public function calculateOperatingMinutes(Coaster $coaster): int
     {
-        [$openHour, $openMinute] = explode(':', $coaster->getOpeningTime());
-        [$closeHour, $closeMinute] = explode(':', $coaster->getClosingTime());
+        $openTime = $coaster->getOpeningTime();
+        $closeTime = $coaster->getClosingTime();
 
-        return (($closeHour * 60 + $closeMinute) - ($openHour * 60 + $openMinute));
+        $openTimestamp = strtotime("1970-01-01 $openTime");
+        $closeTimestamp = strtotime("1970-01-01 $closeTime");
+
+        if ($closeTimestamp < $openTimestamp) {
+            $closeTimestamp += 24 * 60 * 60;
+        }
+
+        return ($closeTimestamp - $openTimestamp) / 60;
     }
 }
